@@ -89,7 +89,7 @@ function getUserOfThatDateToSheet(auth) {
             range: 'A1:E100000',
             majorDimension: 'ROWS',
         },
-        (err, res) => {
+        async (err, res) => {
             if (err) return console.log('The API returned an error: ' + err)
             const rows = res.data.values
             if (rows.length) {
@@ -97,33 +97,60 @@ function getUserOfThatDateToSheet(auth) {
                 const uniqueUser = filteredRecord.reduce(
                     (map, record) => ({
                         ...map,
-                        [record[4]]: record[1],
+                        [record[1]]: record[2],
                     }),
                     {}
                 )
+                const countChapter = filteredRecord.reduce(
+                    (map, record) => ({
+                        ...map,
+                        [record[4]]: map[record[4]] ? map[record[4]] + 1 : 1,
+                    }),
+                    {}
+                )
+                console.log(countChapter)
                 const dataToInsert = [['email', 'name']].concat(
                     Object.entries(uniqueUser)
                 )
-                console.log(dataToInsert.length-1)
+                console.log(dataToInsert.length - 1)
                 const sheetName = getTodayUrlDate()
                 const ranges = `${sheetName}!A1:E100000`
                 const request = {
                     majorDimension: 'ROWS',
                     values: dataToInsert,
                 }
-                sheets.spreadsheets.values.update(
+                await sheets.spreadsheets.values.update(
                     {
                         spreadsheetId: sheetId,
                         range: ranges,
                         valueInputOption: 'RAW',
-                        requestBody:request
+                        requestBody: request,
                     },
-                    (err,res) => {
-                      if(err){
-                        console.log(err)
-                      }
+                    (err, res) => {
+                        if (err) {
+                            console.log(err)
+                        }
                     }
-                )
+                ) 
+                const sumRanges = `${sheetName}-summary!A1:E100000`
+                const sumData = [['Chapter/Other', 'Count']].concat(Object.entries(countChapter))
+                const sumRequest = {
+                  majorDimension: 'ROWS',
+                  values: sumData,
+                }
+                await sheets.spreadsheets.values.update(
+                  {
+                      spreadsheetId: sheetId,
+                      range: sumRanges,
+                      valueInputOption: 'RAW',
+                      requestBody: sumRequest,
+                  },
+                  (err, res) => {
+                      if (err) {
+                          console.log(err)
+                      }
+                  }
+              )
             } else {
                 console.log('No data found.')
             }
