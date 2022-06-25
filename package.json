@@ -11,7 +11,7 @@
     "express": "^4.17.1",
     "global": "^4.4.0",
     "googleapis": "39",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.7"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
