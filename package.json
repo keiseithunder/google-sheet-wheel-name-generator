@@ -8,7 +8,7 @@
     "body-parser": "^1.19.0",
     "dayjs": "^1.10.4",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "global": "^4.4.0",
     "googleapis": "39",
     "node-fetch": "^2.6.1"
